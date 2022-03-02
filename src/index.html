@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Chess view</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        background-image: radial-gradient(circle at 120.71% 50%, #fffdd8 0, #fcf1c5 16.67%, #f7e4b1 33.33%, #f2d59d 50%, #eec68a 66.67%, #eab779 83.33%, #e8a96b 100%);
+        color: #eee;
+        font-family: sans-serif;
+        text-align: center;
+      }
+
+      h1 {
+        display: inline-block;
+        color: black;
+        font-family: 'Righteous', serif;
+        font-size: 4em;
+        text-shadow: .03em .03em 0 hsla(230,40%,50%,1);
+      }
+
+
+      button{
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 20px 33px;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        font-size: 16px;
+        margin: 80px 332px;
+        cursor: pointer;
+        border-radius: 12px;
+        float: right;
+      }
+
+      body:before {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 0;
+        height: 100%;
+      }
+
+
+      h1:after {
+        content: attr(data-shadow);
+        position: absolute;
+        top: .06em; left: .06em;
+        z-index: -1;
+        text-shadow: none;
+        background-image:
+                linear-gradient(
+                        45deg,
+                        transparent 45%,
+                        hsla(48,20%,90%,1) 45%,
+                        hsla(48,20%,90%,1) 55%,
+                        transparent 0
+                );
+        background-size: .05em .05em;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        animation: shad-anim 15s linear infinite;
+      }
+
+      @keyframes shad-anim {
+        0% {background-position: 0 0}
+        0% {background-position: 100% -100%}
+      }
+
+      #tablero {
+        background: url(http://img.freepik.com/free-photo/wooden-texture_1160-686.jpg?size=338&amp;ext=jpg);
+        box-shadow:0 10px 10px -6px rgba(0,0,0,.6);
+        border-radius: 3px;
+        border-collapse: collapse;
+        height: 400px;
+        width: 400px;
+
+        position: absolute;
+        top: 30px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+      }
+
+      #tablero td {
+        color: #222;
+        font-size: 36px;
+        text-shadow: 1px 1px 1px rgba(255,255,255,.6);
+        width: 50px;
+        height: 50px;
+      }
+
+      #tablero tr:nth-child(odd) td:nth-child(even),
+      #tablero tr:nth-child(even) td:nth-child(odd) {
+        background: rgba(0,0,0,.4);
+      }
+
+      #tablero tr:nth-child(n+7) td {
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,.6);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id = "buttons-place"></div>
+
+  <script type="text/babel">
+    class Game extends React.Component{
+      constructor(props){
+        super(props);
+        this.state = {
+          rows: ['a','b','c','d','e','f','g','h'],
+          columns: [1,2,3,4,5,6,7,8],
+          boxes: []
+        }
+      }
+
+      renderSell(){
+        const square = this.state.rows[Math.floor(Math.random() * this.state.rows.length)]+this.state.columns[Math.floor(Math.random() * this.state.columns.length)];
+        this.state.boxes.push(square);
+      }
+
+      render() {
+        return(
+                <div id = "container">
+                  <button className="starGame" onClick={()=> console.log(this.state.rows[Math.floor(Math.random() * this.state.rows.length)]+this.state.columns[Math.floor(Math.random() * this.state.columns.length)])}>Start Game</button>
+                  <ol>
+                    {this.state.boxes.map((box, index) => <li key={index}>{box}</li>)}
+                  </ol>
+                </div>
+
+
+
+        );
+      }
+    }
+
+
+
+    class Board extends React.Component{
+      render() {
+        return(
+                <div className="container">
+                  <div className="board">
+                    <h1>Chess view</h1>
+                    <table id="tablero">
+                      <tr>
+                        <td>&#9820;</td>
+                        <td>&#9822;</td>
+                        <td>&#9821;</td>
+                        <td>&#9819;</td>
+                        <td>&#9818;</td>
+                        <td>&#9821;</td>
+                        <td>&#9822;</td>
+                        <td>&#9820;</td>
+                      </tr>
+                      <tr>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                        <td>&#9823;</td>
+                      </tr>
+                      <tr>
+                        <td>&#9820;</td>
+                        <td>&#9822;</td>
+                        <td>&#9821;</td>
+                        <td>&#9819;</td>
+                        <td>&#9818;</td>
+                        <td>&#9821;</td>
+                        <td>&#9822;</td>
+                        <td>&#9820;</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+        );
+      }
+    }
+
+
+
+    ReactDOM.render(
+            <Game />,
+            document.getElementById('buttons-place')
+    );
+
+
+    ReactDOM.render(
+            <Board />,
+            document.getElementById('root')
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+  </body>
+</html>
