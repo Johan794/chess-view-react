@@ -1,288 +1,402 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <title>Chess view</title>
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-
-    <!-- Don't use this in production: -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-      body {
-        background-image: radial-gradient(circle at 120.71% 50%, #fffdd8 0, #fcf1c5 16.67%, #f7e4b1 33.33%, #f2d59d 50%, #eec68a 66.67%, #eab779 83.33%, #e8a96b 100%);
-        color: #eee;
-        font-family: sans-serif;
-        text-align: center;
-      }
-
-      h1 {
-        display: inline-block;
-        color: black;
-        font-family: 'Righteous', serif;
-        font-size: 4em;
-        text-shadow: .03em .03em 0 hsla(230,40%,50%,1);
-      }
-
-
-      button{
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        padding: 20px 33px;
-        text-align: center;
-        text-decoration: none;
-        display: flex;
-        font-size: 16px;
-        margin: 80px 332px;
-        cursor: pointer;
-        border-radius: 12px;
-        float: right;
-      }
-
-      body:before {
-        content: '';
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 0;
-        height: 100%;
-      }
-
-
-      h1:after {
-        content: attr(data-shadow);
-        position: absolute;
-        top: .06em; left: .06em;
-        z-index: -1;
-        text-shadow: none;
-        background-image:
-                linear-gradient(
-                        45deg,
-                        transparent 45%,
-                        hsla(48,20%,90%,1) 45%,
-                        hsla(48,20%,90%,1) 55%,
-                        transparent 0
-                );
-        background-size: .05em .05em;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-
-        animation: shad-anim 15s linear infinite;
-      }
-
-      @keyframes shad-anim {
-        0% {background-position: 0 0}
-        0% {background-position: 100% -100%}
-      }
-
-      #tablero {
-        background: url(http://img.freepik.com/free-photo/wooden-texture_1160-686.jpg?size=338&amp;ext=jpg);
-        box-shadow:0 10px 10px -6px rgba(0,0,0,.6);
-        border-radius: 3px;
-        border-collapse: collapse;
-        height: 400px;
-        width: 400px;
-
-        position: absolute;
-        top: 30px;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        margin: auto;
-      }
-
-      #tablero td {
-        color: #222;
-        font-size: 36px;
-        text-shadow: 1px 1px 1px rgba(255,255,255,.6);
-        width: 50px;
-        height: 50px;
-      }
-
-      #tablero tr:nth-child(odd) td:nth-child(even),
-      #tablero tr:nth-child(even) td:nth-child(odd) {
-        background: rgba(0,0,0,.4);
-      }
-
-      #tablero tr:nth-child(n+7) td {
-        color: #fff;
-        text-shadow: 1px 1px 1px rgba(0,0,0,.6);
-      }
-
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <div id = "buttons-place"></div>
-
-  <script type="text/babel">
-    class Game extends React.Component{
-      constructor(props){
-        super(props);
-        this.state = {
-          rows: ['a','b','c','d','e','f','g','h'],
-          columns: [1,2,3,4,5,6,7,8],
-          boxes: []
-        }
-      }
-
-      renderSell(){
-        const square = this.state.rows[Math.floor(Math.random() * this.state.rows.length)]+this.state.columns[Math.floor(Math.random() * this.state.columns.length)];
-        this.state.boxes.push(square);
-      }
-
-      render() {
-        return(
-                <div id = "container">
-                  <button className="starGame" onClick={()=> console.log(this.state.rows[Math.floor(Math.random() * this.state.rows.length)]+this.state.columns[Math.floor(Math.random() * this.state.columns.length)])}>Start Game</button>
-                  <ol>
-                    {this.state.boxes.map((box, index) => <li key={index}>{box}</li>)}
-                  </ol>
-                </div>
-
-
-
-        );
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Chess view</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font: 20px "Arial", Futura, sans-serif;
+      margin: 20px;
+      background: rgb(15,15,15);
+      background: linear-gradient(90deg, rgba(15,15,15,1) 0%, rgba(21,21,124,1) 45%, rgba(2,44,224,1) 77%, rgba(0,212,255,1) 100%);
     }
 
+    ol,
+    ul {
+      padding-left: 30px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .board {
+      border: 1px solid black;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+    }
+
+    .text {
+      align-self: center;
+      text-align: center;
+    }
+
+   a{
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .status {
+      margin-bottom: 10px;
+    }
+
+    .square {
+      float: left;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 34px;
+      width: 50px;
+      height: 50px;
+      padding: 0;
+      text-align: center;
+    }
+
+    .square:focus {
+      outline: none;
+    }
+
+    .kbd-navigation .square:focus {
+      background: #ddd;
+    }
+
+    .playButtonAction {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      font-family: "Arial Narrow", Arial, sans-serif;
+      background-color: #4CAF50;
+      font-size: 34px;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      float: left;
+    }
+
+    .playButtonAction:hover {
+      background-color: #4CAF50; /* Green */
+      color: white;
+    }
+
+    .status-game {
+      text-align: center;
+    }
+  </style>
+
+</head>
+
+<body>
+<div id="timer"></div>
+<div id="root"></div>
+<script type="text/babel">
+
+  class Square extends React.Component {
+    constructor(props) {
+      super(props);
+      this.value = props.value;
+      this.onClick = props.onClick;
+      this.color = props.color;
+      this.text = props.text;
+    }
+
+    render() {
+      const mystyle = {
+        backgroundColor: this.color,
+        borderWidth: "0px",
+      }
+      return (
+              <button className="square" style={mystyle} onClick={this.props.onClick}></button>
+      )
+    }
+  }
+
+  class Board extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        squares: Array(64).fill(null),
+        history: [],
+        score: 0,
+        coordinate: '  ',
+        minutes: 1,
+        seconds: 0,
+        displayTimer: 0,
+        timer: 60,
+        start: false,
+        moves: 0
+      };
+    }
+
+    handleClick(i) {
+      const squares = this.state.squares.slice();
+
+      if (endGame(this.state.seconds, this.state.minutes) || !this.state.start) {
+        return;
+      }
+
+      this.state.score = this.state.score + checkScore(this.state.coordinate, i);
+
+      if (checkScore(this.state.coordinate, i) === 1) {
+        this.timeSelected();
+        const plays = {
+          text: "Coordinate:" + this.state.coordinate + ", Time 0:" + this.state.displayTimer +'✅',
+          id: this.state.moves
+        }
+        this.state.moves = this.state.moves + 1;
+        this.state.history = this.state.history.concat(plays);
+        squares[i] = '✓';
+      } else {
+        this.timeSelected();
+        const plays = {
+          text: "Coordinate: " + this.state.coordinate + ", Time 0:" + this.state.displayTimer + "❌",
+          id: this.state.moves
+        }
+        this.state.moves = this.state.moves + 1;
+        this.state.history = this.state.history.concat(plays);
+        squares[i] = 'X';
+      }
+      this.state.coordinate = getRandomCoordinate();
 
 
-    class Board extends React.Component{
-      render() {
-        return(
+      this.setState({
+        squares: squares
+      });
+    }
+
+    renderSquare(i, color,text) {
+      return <Square value={this.state.squares[i]}
+                     onClick={() => this.handleClick(i)}
+                     color={color}
+                     text={text}
+      />;
+    }
+
+    renderPlayButton() {
+      return <button className="playButtonAction" onClick={() => this.startGame()} >
+        {this.startGameText()}
+      </button>
+    }
+
+    startGameText() {
+      let text = "Restart"
+      if (this.state.start === false) {
+        text = "Start Game"
+      }
+      return text;
+    }
+
+    startGame() {
+      if (this.state.start === false) {
+        this.state.start = true;
+        this.state.coordinate= getRandomCoordinate();
+      } else {
+        this.state.timer = 60;
+        this.state.seconds = 0;
+        this.state.minutes = 1;
+        this.state.score = 0;
+        this.state.coordinate = getRandomCoordinate();
+        this.state.history = [];
+        this.state.moves = 0;
+      }
+
+    }
+
+    tick() {
+      this.setState(state => ({
+        seconds: state.seconds + this.checkSeconds(),
+        minutes: state.minutes + this.checkMin(),
+      }));
+    }
+
+    componentDidMount() {
+      this.interval = setInterval(() => this.tick(), 1000);
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+
+    timeSelected() {
+      this.state.displayTimer = this.state.timer - this.state.seconds;
+      this.state.timer = this.state.seconds;
+    }
+
+    checkMin() {
+      let sum = 0;
+      if (this.state.minutes === 1 & this.state.start) {
+        sum = -1;
+      }
+      return sum;
+    }
+
+    checkSeconds() {
+      let sum = 0;
+      if (this.state.minutes === 1 & this.state.start) {
+        sum = 59;
+      } else if (this.state.seconds > 0 & this.state.start) {
+        sum = -1;
+      }
+      return sum;
+    }
+
+    render() {
+      const end = endGame(this.state.seconds, this.state.minutes);
+      let status;
+      if (end) {
+        status = 'Score: ' + this.state.score * 15 + ', Correct coordinates: ' + this.state.score;
+      } else {
+        status = 'Score ' + this.state.score * 15;
+      }
+
+      return (
+              <div>
+                <div className='status-game'>
+                  Time: {this.state.minutes}:{this.state.seconds}
+                  <div className="coordinateSearch">Coordinate: {this.state.coordinate}</div>
+                  <div className="status">{status}</div>
+                </div>
                 <div className="container">
                   <div className="board">
-                    <h1>Chess view</h1>
-                    <table id="tablero">
-                      <tr>
-                        <td>&#9820;</td>
-                        <td>&#9822;</td>
-                        <td>&#9821;</td>
-                        <td>&#9819;</td>
-                        <td>&#9818;</td>
-                        <td>&#9821;</td>
-                        <td>&#9822;</td>
-                        <td>&#9820;</td>
-                      </tr>
-                      <tr>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                        <td>&#9823;</td>
-                      </tr>
-                      <tr>
-                        <td>&#9820;</td>
-                        <td>&#9822;</td>
-                        <td>&#9821;</td>
-                        <td>&#9819;</td>
-                        <td>&#9818;</td>
-                        <td>&#9821;</td>
-                        <td>&#9822;</td>
-                        <td>&#9820;</td>
-                      </tr>
-                    </table>
+                    {this.renderSquare('a8', 'black','8')}
+                    {this.renderSquare('b8', 'white','')}
+                    {this.renderSquare('c8', 'black','')}
+                    {this.renderSquare('d8', 'white','')}
+                    {this.renderSquare('e8', 'black','')}
+                    {this.renderSquare('f8', 'white','')}
+                    {this.renderSquare('g8', 'black','')}
+                    {this.renderSquare('h8', 'white','')}
+                    <a className="text">8</a>
+
+                    {this.renderSquare('a7', 'white','7')}
+                    {this.renderSquare('b7', 'black','')}
+                    {this.renderSquare('c7', 'white','')}
+                    {this.renderSquare('d7', 'black','')}
+                    {this.renderSquare('e7', 'white','')}
+                    {this.renderSquare('f7', 'black','')}
+                    {this.renderSquare('g7', 'white', '')}
+                    {this.renderSquare('h7', 'black','')}
+                    <a className="text">7</a>
+
+                    {this.renderSquare('a6', 'black',6)}
+                    {this.renderSquare('b6', 'white','')}
+                    {this.renderSquare('c6', 'black','')}
+                    {this.renderSquare('d6', 'white','')}
+                    {this.renderSquare('e6', 'black','')}
+                    {this.renderSquare('f6', 'white','')}
+                    {this.renderSquare('g6', 'black', '')}
+                    {this.renderSquare('h6', 'white','')}
+
+                    <a className="text">6</a>
+
+                    {this.renderSquare('a5', 'white')}
+                    {this.renderSquare('b5', 'black')}
+                    {this.renderSquare('c5', 'white')}
+                    {this.renderSquare('d5', 'black')}
+                    {this.renderSquare('e5', 'white')}
+                    {this.renderSquare('f5', 'black')}
+                    {this.renderSquare('g5', 'white')}
+                    {this.renderSquare('h5', 'black')}
+                    <a className='text'>5</a>
+
+                    {this.renderSquare('a4', 'black')}
+                    {this.renderSquare('b4', 'white')}
+                    {this.renderSquare('c4', 'black')}
+                    {this.renderSquare('d4', 'white')}
+                    {this.renderSquare('e4', 'black')}
+                    {this.renderSquare('f4', 'white')}
+                    {this.renderSquare('g4', 'black')}
+                    {this.renderSquare('h4', 'white')}
+                    <a className='text'>4</a>
+
+                    {this.renderSquare('a3', 'white')}
+                    {this.renderSquare('b3', 'black')}
+                    {this.renderSquare('c3', 'white')}
+                    {this.renderSquare('d3', 'black')}
+                    {this.renderSquare('e3', 'white')}
+                    {this.renderSquare('f3', 'black')}
+                    {this.renderSquare('g3', 'white')}
+                    {this.renderSquare('h3', 'black')}
+                    <a className='text'>3</a>
+
+                    {this.renderSquare('a2', 'black')}
+                    {this.renderSquare('b2', 'white')}
+                    {this.renderSquare('c2', 'black')}
+                    {this.renderSquare('d2', 'white')}
+                    {this.renderSquare('e2', 'black')}
+                    {this.renderSquare('f2', 'white')}
+                    {this.renderSquare('g2', 'black')}
+                    {this.renderSquare('h2', 'white')}
+                    <a className='text'>2</a>
+
+                    {this.renderSquare('a1', 'white')}
+                    {this.renderSquare('b1', 'black')}
+                    {this.renderSquare('c1', 'white')}
+                    {this.renderSquare('d1', 'black')}
+                    {this.renderSquare('e1', 'white')}
+                    {this.renderSquare('f1', 'black')}
+                    {this.renderSquare('g1', 'white')}
+                    {this.renderSquare('h1', 'black')}
+                    <a className='text'>1</a>
+
+                    <a className='text'>a</a>
+                    <a className='text'>b</a>
+                    <a className='text'>c</a>
+                    <a className='text'>d</a>
+                    <a className='text'>e</a>
+                    <a className='text'>f</a>
+                    <a className='text'>g</a>
+                    <a className='text'>h</a>
                   </div>
+                  {this.renderPlayButton()}
+                  <ul>
+                    {this.state.history.map(item => (
+                            <li key={item.id}>{item.text}</li>
+                    ))}
+                  </ul>
                 </div>
-
-        );
-      }
+              </div>
+      );
     }
+  }
 
+  function checkScore(coordinate, i) {
+    let sum = 0;
+    if (coordinate === i) {
+      sum = 1;
+    }
+    return sum;
+  }
 
+  function getRandomCoordinate() {
+    const list = ['a8', 'a7', 'a6', 'a5', 'a4', 'a3', 'a2', 'a1',
+      'b8', 'b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1',
+      'c8', 'c7', 'c6', 'c5', 'c4', 'c3', 'c2', 'c1',
+      'd8', 'd7', 'd6', 'd5', 'd4', 'd3', 'd2', 'd1',
+      'e8', 'e7', 'e6', 'e5', 'e4', 'e3', 'e2', 'e1',
+      'f8', 'f7', 'f6', 'f5', 'f4', 'f3', 'f2', 'f1',
+      'g8', 'g7', 'g6', 'g5', 'g4', 'g3', 'g2', 'g1',
+      'h8', 'h7', 'h6', 'h5', 'h4', 'h3', 'h2', 'h1'];
+    return list[Math.floor(Math.random() * (63))];
+  }
 
-    ReactDOM.render(
-            <Game />,
-            document.getElementById('buttons-place')
-    );
+  function endGame(seconds, minutes) {
+    let end = false;
+    if (seconds === 0 & minutes === 0) {
+      end = true;
+    }
+    return end;
+  }
 
+  ReactDOM.render(
+          <Board />,
+          document.getElementById('root')
+  );
 
-    ReactDOM.render(
-            <Board />,
-            document.getElementById('root')
-    );
+</script>
+</body>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </script>
-  </body>
 </html>
